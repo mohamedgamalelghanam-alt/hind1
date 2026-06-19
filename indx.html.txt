@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hend Louqa | Professional Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 50:'#eef2f7', 100:'#d4dce8', 200:'#a9b9d1', 300:'#7e96ba', 400:'#5373a3', 500:'#2d4f7e', 600:'#1e3a5f', 700:'#142d4a', 800:'#0a1f35', 900:'#061428', 950:'#030a17' },
+                        gold: { 50:'#fdf9ed', 100:'#faf0cc', 200:'#f5e099', 300:'#efd066', 400:'#e9c033', 500:'#c9a84c', 600:'#a68a3a', 700:'#836c2b', 800:'#604e1e', 900:'#3d3212' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Loading Screen */
+        #loader { position:fixed; inset:0; z-index:9999; background:#030a17; display:flex; align-items:center; justify-content:center; flex-direction:column; transition: opacity 0.6s ease, visibility 0.6s ease; }
+        #loader.hidden { opacity:0; visibility:hidden; }
+        .loader-ring { width:60px; height:60px; border:3px solid transparent; border-top:3px solid #c9a84c; border-right:3px solid #c9a84c; border-radius:50%; animation: spin 1s linear infinite; }
+        .loader-ring-inner { width:40px; height:40px; border:3px solid transparent; border-bottom:3px solid #ffffff; border-left:3px solid #ffffff; border-radius:50%; animation: spin 0.6s linear infinite reverse; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .loader-text { font-family:'Playfair Display',serif; color:#c9a84c; font-size:1.5rem; margin-top:1.5rem; letter-spacing:0.3em; animation: pulse-gold 2s ease-in-out infinite; }
+        @keyframes pulse-gold { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
+
+        /* Scroll Progress */
+        #scroll-progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,#c9a84c,#e9c033,#c9a84c); z-index:9998; transition:width 0.1s linear; width:0%; }
+
+        /* Particles */
+        #particles-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+        /* Glassmorphism */
+        .glass { background:rgba(255,255,255,0.08); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.12); }
+        .dark .glass { background:rgba(10,31,53,0.6); border-color:rgba(255,255,255,0.08); }
+        .light .glass { background:rgba(255,255,255,0.7); border-color:rgba(0,0,0,0.08); }
+        .glass-card { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .glass-card:hover { transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.15); }
+
+        /* Reveal Animations */
+        .reveal { opacity:0; transform:translateY(40px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .reveal.active { opacity:1; transform:translateY(0); }
+        .reveal-left { opacity:0; transform:translateX(-60px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .reveal-left.active { opacity:1; transform:translateX(0); }
+        .reveal-right { opacity:0; transform:translateX(60px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .reveal-right.active { opacity:1; transform:translateX(0); }
+        .reveal-scale { opacity:0; transform:scale(0.9); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .reveal-scale.active { opacity:1; transform:scale(1); }
+
+        /* Typing cursor */
+        .typing-cursor { display:inline-block; width:3px; height:1.1em; background:#c9a84c; margin-left:4px; animation: blink 0.8s step-end infinite; vertical-align:text-bottom; }
+        @keyframes blink { 50%{opacity:0;} }
+
+        /* Skill bar animation */
+        .skill-bar-fill { width:0%; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); }
+        .skill-bar-fill.animated { width:var(--target-width); }
+
+        /* Timeline */
+        .timeline-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, #c9a84c, #c9a84c, transparent); transform:translateX(-50%); }
+        @media(max-width:767px) { .timeline-line { left:20px; } }
+        .timeline-dot { width:16px; height:16px; border:3px solid #c9a84c; background:#030a17; border-radius:50%; position:absolute; left:50%; top:0; transform:translateX(-50%); z-index:2; transition: all 0.3s ease; }
+        .dark .timeline-dot { background:#030a17; }
+        .light .timeline-dot { background:#ffffff; }
+        @media(max-width:767px) { .timeline-dot { left:20px; } }
+        .timeline-item:hover .timeline-dot { background:#c9a84c; box-shadow:0 0 20px rgba(201,168,76,0.5); }
+
+        /* Counter */
+        .counter-value { font-variant-numeric:tabular-nums; }
+
+        /* Gradient text */
+        .gradient-text { background:linear-gradient(135deg, #c9a84c 0%, #e9c033 50%, #c9a84c 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+        /* Hover lift */
+        .hover-lift { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .hover-lift:hover { transform:translateY(-6px); box-shadow:0 25px 60px -12px rgba(0,0,0,0.25); }
+
+        /* Nav */
+        .nav-link { position:relative; }
+        .nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:#c9a84c; transition:width 0.3s ease; }
+        .nav-link:hover::after { width:100%; }
+
+        /* Smooth section bg */
+        .section-dark { background: linear-gradient(180deg, #030a17 0%, #0a1f35 50%, #030a17 100%); }
+        .section-light { background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 50%, #f8f9fa 100%); }
+
+        /* Hero name animation */
+        .hero-name span { display:inline-block; opacity:0; transform:translateY(60px) rotateX(-40deg); animation: nameReveal 0.8s forwards; }
+        @keyframes nameReveal { to { opacity:1; transform:translateY(0) rotateX(0); } }
+
+        /* Subtle float */
+        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+
+        /* Pulse ring */
+        @keyframes pulse-ring { 0%{transform:scale(1);opacity:0.6;} 100%{transform:scale(1.8);opacity:0;} }
+        .pulse-ring::before { content:''; position:absolute; inset:-4px; border:2px solid #c9a84c; border-radius:50%; animation: pulse-ring 2s ease-out infinite; }
+
+        /* Light mode overrides */
+        html.light body { background:#f8f9fa; color:#1a1a2e; }
+        html.dark body { background:#030a17; color:#e2e8f0; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:#c9a84c; border-radius:3px; }
+
+        /* Mobile menu */
+        .mobile-menu { transform:translateX(100%); transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .mobile-menu.open { transform:translateX(0); }
+
+        /* Back to top */
+        #back-to-top { opacity:0; visibility:hidden; transform:translateY(20px); transition:all 0.3s ease; }
+        #back-to-top.visible { opacity:1; visibility:visible; transform:translateY(0); }
+
+        /* WhatsApp button */
+        .whatsapp-btn { animation: float 3s ease-in-out infinite; }
+
+        /* Premium divider */
+        .premium-divider { display:flex; align-items:center; gap:1rem; }
+        .premium-divider::before, .premium-divider::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, transparent, #c9a84c40, transparent); }
+
+        /* Stagger children */
+        .stagger-children > * { opacity:0; transform:translateY(20px); }
+        .stagger-children.active > *:nth-child(1) { animation: fadeUp 0.6s 0.1s forwards; }
+        .stagger-children.active > *:nth-child(2) { animation: fadeUp 0.6s 0.2s forwards; }
+        .stagger-children.active > *:nth-child(3) { animation: fadeUp 0.6s 0.3s forwards; }
+        .stagger-children.active > *:nth-child(4) { animation: fadeUp 0.6s 0.4s forwards; }
+        .stagger-children.active > *:nth-child(5) { animation: fadeUp 0.6s 0.5s forwards; }
+        .stagger-children.active > *:nth-child(6) { animation: fadeUp 0.6s 0.6s forwards; }
+        .stagger-children.active > *:nth-child(7) { animation: fadeUp 0.6s 0.7s forwards; }
+        .stagger-children.active > *:nth-child(8) { animation: fadeUp 0.6s 0.8s forwards; }
+        .stagger-children.active > *:nth-child(9) { animation: fadeUp 0.6s 0.9s forwards; }
+        .stagger-children.active > *:nth-child(10) { animation: fadeUp 0.6s 1.0s forwards; }
+        .stagger-children.active > *:nth-child(11) { animation: fadeUp 0.6s 1.1s forwards; }
+        .stagger-children.active > *:nth-child(12) { animation: fadeUp 0.6s 1.2s forwards; }
+        .stagger-children.active > *:nth-child(13) { animation: fadeUp 0.6s 1.3s forwards; }
+        @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    </style>
+</head>
+<html class="dark">
+<body class="font-sans antialiased overflow-x-hidden">
+
+<!-- Loading Screen -->
+<div id="loader">
+    <div class="relative flex items-center justify-center">
+        <div class="loader-ring absolute"></div>
+        <div class="loader-ring-inner absolute"></div>
+    </div>
+    <div class="loader-text">HEND LOUQA</div>
+    <p class="text-navy-400 text-xs tracking-[0.5em] mt-3 uppercase">Loading Portfolio</p>
+</div>
+
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
+
+<!-- Particles Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Navigation -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="#hero" class="flex items-center gap-2 group">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center text-navy-950 font-serif font-bold text-lg group-hover:scale-110 transition-transform">H</div>
+            <span class="font-serif text-lg font-semibold dark:text-white text-navy-900 hidden sm:block">Hend Louqa</span>
+        </a>
+        <div class="hidden lg:flex items-center gap-8">
+            <a href="#about" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">About</a>
+            <a href="#education" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">Education</a>
+            <a href="#experience" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">Experience</a>
+            <a href="#skills" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">Skills</a>
+            <a href="#strengths" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">Strengths</a>
+            <a href="#contact" class="nav-link text-sm font-medium dark:text-navy-200 text-navy-700 dark:hover:text-white hover:text-navy-900 transition-colors">Contact</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="theme-toggle" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-gold-400 text-navy-600 hover:scale-110 transition-all" title="Toggle Theme">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+            </button>
+            <a href="#contact" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 px-5 py-2.5 rounded-full text-sm font-semibold hover:from-gold-400 hover:to-gold-500 transition-all hover:scale-105 hover:shadow-lg hover:shadow-gold-500/25">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                Hire Me
+            </a>
+            <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 rounded-full glass flex items-center justify-center dark:text-white text-navy-800">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 z-50 bg-navy-950/98 backdrop-blur-xl flex flex-col items-center justify-center gap-6">
+    <button id="mobile-menu-close" class="absolute top-6 right-6 w-10 h-10 rounded-full glass flex items-center justify-center text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+    <a href="#about" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">About</a>
+    <a href="#education" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">Education</a>
+    <a href="#experience" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">Experience</a>
+    <a href="#skills" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">Skills</a>
+    <a href="#strengths" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">Strengths</a>
+    <a href="#contact" class="mobile-link text-2xl font-serif text-white hover:text-gold-400 transition-colors">Contact</a>
+</div>
+
+<!-- Hero Section -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <div class="absolute inset-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gold-500/5 rounded-full blur-3xl"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+            <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span class="text-xs font-medium dark:text-navy-200 text-navy-600 tracking-wider uppercase">Available for Opportunities</span>
+            </div>
+            <h1 class="hero-name font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold dark:text-white text-navy-900 leading-[0.95] tracking-tight mb-6">
+                <span style="animation-delay:0.2s">H</span><span style="animation-delay:0.25s">e</span><span style="animation-delay:0.3s">n</span><span style="animation-delay:0.35s">d</span><br>
+                <span class="gradient-text" style="animation-delay:0.5s">L</span><span class="gradient-text" style="animation-delay:0.55s">o</span><span class="gradient-text" style="animation-delay:0.6s">u</span><span class="gradient-text" style="animation-delay:0.65s">q</span><span class="gradient-text" style="animation-delay:0.7s">a</span>
+            </h1>
+            <p class="text-base sm:text-lg dark:text-navy-300 text-navy-500 font-light mb-2 tracking-wide">Accounting Student <span class="text-gold-500">|</span> Administrative Support <span class="text-gold-500">|</span> Customer Service Specialist</p>
+            <div class="h-8 mt-4 mb-8">
+                <span class="text-sm dark:text-gold-400 text-gold-600 font-medium" id="typing-text"></span>
+                <span class="typing-cursor"></span>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                <a href="#contact" class="group flex items-center gap-2 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 px-8 py-3.5 rounded-full font-semibold text-sm hover:from-gold-400 hover:to-gold-500 transition-all hover:scale-105 hover:shadow-xl hover:shadow-gold-500/25">
+                    <i data-lucide="arrow-down-right" class="w-4 h-4 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform"></i>
+                    Get In Touch
+                </a>
+                <button onclick="downloadCV()" class="group flex items-center gap-2 glass dark:text-white text-navy-800 px-8 py-3.5 rounded-full font-semibold text-sm hover:scale-105 transition-all">
+                    <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
+                    Download CV
+                </button>
+            </div>
+            <div class="flex items-center gap-6 mt-10 justify-center lg:justify-start">
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="github" class="w-4 h-4"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                <a href="mailto:hend.louqa@email.com" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="mail" class="w-4 h-4"></i></a>
+            </div>
+        </div>
+        <div class="flex-shrink-0 order-1 lg:order-2">
+            <div class="relative">
+                <div class="absolute -inset-4 bg-gradient-to-br from-gold-500/20 to-gold-700/20 rounded-3xl blur-2xl"></div>
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-3xl overflow-hidden border-2 border-gold-500/30 float-anim">
+                    <img src="https://picsum.photos/seed/hend-portrait-pro/500/500.jpg" alt="Hend Louqa" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent"></div>
+                </div>
+                <div class="absolute -bottom-4 -right-4 glass rounded-2xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-5 h-5 text-gold-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs dark:text-navy-400 text-navy-500">Expected Graduation</p>
+                        <p class="text-sm font-semibold dark:text-white text-navy-800">2026</p>
+                    </div>
+                </div>
+                <div class="absolute -top-4 -left-4 glass rounded-2xl px-4 py-3">
+                    <p class="text-2xl font-bold gradient-text">4+</p>
+                    <p class="text-xs dark:text-navy-400 text-navy-500">Roles</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+        <span class="text-xs dark:text-navy-400 text-navy-500 tracking-widest uppercase">Scroll</span>
+        <i data-lucide="chevron-down" class="w-4 h-4 dark:text-gold-400 text-gold-600"></i>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section id="stats" class="relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23c9a84c%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="reveal glass-card glass rounded-2xl p-6 text-center" style="transition-delay:0.1s">
+                <div class="text-4xl md:text-5xl font-bold gradient-text counter-value" data-target="4">0</div>
+                <div class="w-8 h-0.5 bg-gold-500/50 mx-auto my-3"></div>
+                <p class="text-sm dark:text-navy-300 text-navy-500 font-medium">Professional Roles</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 text-center" style="transition-delay:0.2s">
+                <div class="text-4xl md:text-5xl font-bold gradient-text counter-value" data-target="17">0</div>
+                <div class="w-8 h-0.5 bg-gold-500/50 mx-auto my-3"></div>
+                <p class="text-sm dark:text-navy-300 text-navy-500 font-medium">Key Skills</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 text-center" style="transition-delay:0.3s">
+                <div class="text-4xl md:text-5xl font-bold gradient-text counter-value" data-target="4">0</div>
+                <div class="w-8 h-0.5 bg-gold-500/50 mx-auto my-3"></div>
+                <p class="text-sm dark:text-navy-300 text-navy-500 font-medium">Years of Study</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 text-center" style="transition-delay:0.4s">
+                <div class="text-4xl md:text-5xl font-bold gradient-text counter-value" data-target="2">0</div>
+                <div class="w-8 h-0.5 bg-gold-500/50 mx-auto my-3"></div>
+                <p class="text-sm dark:text-navy-300 text-navy-500 font-medium">Languages Spoken</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Professional Summary -->
+<section id="about" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Professional Summary</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">About Me</h2>
+        </div>
+        <div class="reveal glass-card glass rounded-3xl p-8 md:p-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <i data-lucide="user" class="w-6 h-6 text-gold-400"></i>
+                </div>
+                <p class="dark:text-navy-200 text-navy-600 leading-relaxed text-base md:text-lg font-light">
+                    Motivated and detail-oriented <span class="text-gold-400 font-medium">Accounting student</span> in the final semester with diverse experience in reception, administrative support, sales, social media moderation, and data entry.
+                </p>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <i data-lucide="target" class="w-6 h-6 text-gold-400"></i>
+                </div>
+                <p class="dark:text-navy-200 text-navy-600 leading-relaxed text-base md:text-lg font-light">
+                    Strong <span class="text-gold-400 font-medium">communication, organizational, and customer service</span> skills with the ability to work efficiently in fast-paced environments. Eager to contribute to a dynamic team and grow professionally.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Education Section -->
+<section id="education" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Education</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Academic Background</h2>
+        </div>
+        <div class="reveal-scale">
+            <div class="glass-card glass rounded-3xl p-8 md:p-12 hover-lift relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+                <div class="relative flex flex-col md:flex-row items-start gap-6">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="graduation-cap" class="w-10 h-10 text-gold-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                            <h3 class="font-serif text-2xl md:text-3xl font-bold dark:text-white text-navy-900">Bachelor of Commerce</h3>
+                            <span class="inline-flex items-center gap-1.5 bg-gold-500/10 text-gold-400 px-4 py-1.5 rounded-full text-sm font-medium self-start">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                Expected 2026
+                            </span>
+                        </div>
+                        <p class="text-lg dark:text-gold-400 text-gold-600 font-medium mb-3">Accounting Major</p>
+                        <p class="dark:text-navy-300 text-navy-500">Faculty of Commerce</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-navy-500/10 dark:text-navy-300 text-navy-600">Financial Accounting</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-navy-500/10 dark:text-navy-300 text-navy-600">Managerial Accounting</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-navy-500/10 dark:text-navy-300 text-navy-600">Auditing</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-navy-500/10 dark:text-navy-300 text-navy-600">Taxation</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-navy-500/10 dark:text-navy-300 text-navy-600">Business Law</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Experience Section -->
+<section id="experience" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-5xl mx-auto px-6">
+        <div class="text-center mb-20 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Experience</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Professional Journey</h2>
+        </div>
+        <div class="relative">
+            <div class="timeline-line"></div>
+
+            <!-- Timeline Item 1 -->
+            <div class="timeline-item relative mb-16 reveal-left" style="transition-delay:0.1s">
+                <div class="timeline-dot"></div>
+                <div class="md:w-5/12 md:ml-auto md:pl-12 pl-14">
+                    <div class="glass-card glass rounded-2xl p-6 hover-lift">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
+                                <i data-lucide="stethoscope" class="w-5 h-5 text-gold-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold dark:text-white text-navy-900 text-sm">Receptionist & Dental Clinic Assistant</h3>
+                                <p class="text-xs dark:text-navy-400 text-navy-500">Healthcare</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Managed patient appointments and scheduling</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Handled patient records and administrative documentation</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Assisted in maintaining clinic operations</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Responded professionally to patient inquiries</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Supported front-desk and customer service functions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 2 -->
+            <div class="timeline-item relative mb-16 reveal-right" style="transition-delay:0.2s">
+                <div class="timeline-dot"></div>
+                <div class="md:w-5/12 md:mr-auto md:pr-12 pl-14 md:pl-0">
+                    <div class="glass-card glass rounded-2xl p-6 hover-lift">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
+                                <i data-lucide="shopping-bag" class="w-5 h-5 text-gold-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold dark:text-white text-navy-900 text-sm">Sales Representative</h3>
+                                <p class="text-xs dark:text-navy-400 text-navy-500">Cosmetics Company</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Promoted and sold cosmetic products</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Assisted customers in selecting products</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Maintained customer relationships</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Achieved sales goals through communication and product knowledge</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 3 -->
+            <div class="timeline-item relative mb-16 reveal-left" style="transition-delay:0.3s">
+                <div class="timeline-dot"></div>
+                <div class="md:w-5/12 md:ml-auto md:pl-12 pl-14">
+                    <div class="glass-card glass rounded-2xl p-6 hover-lift">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
+                                <i data-lucide="message-circle" class="w-5 h-5 text-gold-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold dark:text-white text-navy-900 text-sm">Social Media Moderator</h3>
+                                <p class="text-xs dark:text-navy-400 text-navy-500">Digital Media</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Managed customer interactions across social platforms</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Responded to comments and inquiries</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Maintained positive customer engagement</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Assisted with content moderation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 4 -->
+            <div class="timeline-item relative reveal-right" style="transition-delay:0.4s">
+                <div class="timeline-dot"></div>
+                <div class="md:w-5/12 md:mr-auto md:pr-12 pl-14 md:pl-0">
+                    <div class="glass-card glass rounded-2xl p-6 hover-lift">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
+                                <i data-lucide="database" class="w-5 h-5 text-gold-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold dark:text-white text-navy-900 text-sm">Data Entry Specialist</h3>
+                                <p class="text-xs dark:text-navy-400 text-navy-500">Administration</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Entered and updated records accurately</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Organized electronic databases</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Prepared reports and maintained consistency</li>
+                            <li class="flex items-start gap-2.5 text-sm dark:text-navy-300 text-navy-600"><i data-lucide="check-circle-2" class="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5"></i>Maintained confidentiality of information</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-5xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Skills</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Professional Skills</h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-x-12 gap-y-5 stagger-children" id="skills-container">
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Customer Service</span><span class="text-sm text-gold-400 font-medium">95%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:95%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Reception Management</span><span class="text-sm text-gold-400 font-medium">92%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:92%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Administrative Support</span><span class="text-sm text-gold-400 font-medium">90%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:90%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Data Entry</span><span class="text-sm text-gold-400 font-medium">93%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:93%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Social Media Management</span><span class="text-sm text-gold-400 font-medium">88%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:88%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Sales & Negotiation</span><span class="text-sm text-gold-400 font-medium">87%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:87%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Microsoft Word</span><span class="text-sm text-gold-400 font-medium">94%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:94%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Microsoft Excel</span><span class="text-sm text-gold-400 font-medium">90%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:90%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Microsoft PowerPoint</span><span class="text-sm text-gold-400 font-medium">89%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:89%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Internet Research</span><span class="text-sm text-gold-400 font-medium">91%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:91%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Communication Skills</span><span class="text-sm text-gold-400 font-medium">96%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:96%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Time Management</span><span class="text-sm text-gold-400 font-medium">92%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:92%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Problem Solving</span><span class="text-sm text-gold-400 font-medium">90%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:90%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Attention to Detail</span><span class="text-sm text-gold-400 font-medium">94%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:94%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Teamwork</span><span class="text-sm text-gold-400 font-medium">93%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:93%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Adaptability</span><span class="text-sm text-gold-400 font-medium">91%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:91%"></div></div>
+            </div>
+            <div class="skill-item">
+                <div class="flex justify-between mb-2"><span class="text-sm font-medium dark:text-navy-200 text-navy-700">Fast Learning Ability</span><span class="text-sm text-gold-400 font-medium">95%</span></div>
+                <div class="h-2 rounded-full bg-navy-500/10 overflow-hidden"><div class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400" style="--target-width:95%"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Competencies -->
+<section id="competencies" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Competencies</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Core Competencies</h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children" id="competencies-grid">
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="headphones" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Customer Service</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="clipboard-list" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Administrative Support</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="door-open" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Reception Management</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="keyboard" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Data Entry</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="share-2" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Social Media Management</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="shield-check" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Social Media Moderation</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="handshake" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Sales & Customer Relations</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="file-spreadsheet" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Microsoft Office</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="mic" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Communication Skills</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="clock" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Time Management</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="lightbulb" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Problem Solving</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="scan-eye" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Attention to Detail</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-5 text-center group cursor-default col-span-2 sm:col-span-1">
+                <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold-500/20 transition-colors"><i data-lucide="users" class="w-6 h-6 text-gold-400"></i></div>
+                <p class="text-sm font-medium dark:text-navy-200 text-navy-700">Teamwork</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Languages Section -->
+<section id="languages" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Languages</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Language Proficiency</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-6">
+            <div class="reveal glass-card glass rounded-2xl p-8 text-center hover-lift" style="transition-delay:0.1s">
+                <div class="w-16 h-16 rounded-full bg-gold-500/10 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">🇸🇦</span>
+                </div>
+                <h3 class="font-serif text-2xl font-bold dark:text-white text-navy-900 mb-2">Arabic</h3>
+                <p class="text-gold-400 font-medium text-sm mb-4">Native Speaker</p>
+                <div class="flex justify-center gap-1">
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                </div>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-8 text-center hover-lift" style="transition-delay:0.2s">
+                <div class="w-16 h-16 rounded-full bg-gold-500/10 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">🇬🇧</span>
+                </div>
+                <h3 class="font-serif text-2xl font-bold dark:text-white text-navy-900 mb-2">English</h3>
+                <p class="text-gold-400 font-medium text-sm mb-4">Intermediate</p>
+                <div class="flex justify-center gap-1">
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-gold-500"></div>
+                    <div class="w-10 h-2 rounded-full bg-navy-500/20"></div>
+                    <div class="w-10 h-2 rounded-full bg-navy-500/20"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Personal Strengths -->
+<section id="strengths" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Strengths</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Personal Strengths</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children" id="strengths-grid">
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="heart-handshake" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Strong Interpersonal Skills</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Building meaningful professional relationships with ease and confidence.</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="badge-check" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Professional Attitude & Appearance</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Maintaining the highest standards of professionalism in every setting.</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="flame" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Ability to Work Under Pressure</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Thriving in high-pressure environments with calm and focus.</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="rocket" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Self-Motivated & Reliable</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Taking initiative and delivering consistent, dependable results.</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="zap" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Positive Attitude & Quick Learner</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Approaching challenges with optimism and rapid skill acquisition.</p>
+            </div>
+            <div class="glass-card glass rounded-2xl p-6 hover-lift group">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="heart" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 mb-2">Customer-Oriented Mindset</h3>
+                <p class="text-sm dark:text-navy-400 text-navy-500 leading-relaxed">Always prioritizing customer satisfaction and exceptional service delivery.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Career Objective -->
+<section id="objective" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-gold-500/5"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Objective</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Career Objective</h2>
+        </div>
+        <div class="reveal-scale">
+            <div class="relative glass rounded-3xl p-8 md:p-12 overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
+                <div class="flex items-start gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="compass" class="w-8 h-8 text-navy-950"></i>
+                    </div>
+                    <div>
+                        <i data-lucide="quote" class="w-8 h-8 text-gold-500/30 mb-3"></i>
+                        <p class="dark:text-navy-200 text-navy-600 text-base md:text-lg leading-relaxed font-light">
+                            Seeking a challenging opportunity in <span class="text-gold-400 font-medium">Administration, Customer Service, Reception, Data Entry, Sales, or Social Media Management</span> where I can utilize my academic background and practical experience to contribute effectively to organizational growth while advancing my professional career.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Information -->
+<section id="additional" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">More About Me</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Additional Information</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4 stagger-children" id="additional-grid">
+            <div class="reveal glass-card glass rounded-2xl p-6 flex items-start gap-4 hover-lift" style="transition-delay:0.1s">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="message-square" class="w-5 h-5 text-gold-400"></i>
+                </div>
+                <p class="text-sm dark:text-navy-200 text-navy-600 leading-relaxed">Excellent communication and interpersonal skills</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 flex items-start gap-4 hover-lift" style="transition-delay:0.2s">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="user-check" class="w-5 h-5 text-gold-400"></i>
+                </div>
+                <p class="text-sm dark:text-navy-200 text-navy-600 leading-relaxed">Ability to work independently and as part of a team</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 flex items-start gap-4 hover-lift" style="transition-delay:0.3s">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="list-checks" class="w-5 h-5 text-gold-400"></i>
+                </div>
+                <p class="text-sm dark:text-navy-200 text-navy-600 leading-relaxed">Highly organized with strong attention to detail</p>
+            </div>
+            <div class="reveal glass-card glass rounded-2xl p-6 flex items-start gap-4 hover-lift" style="transition-delay:0.4s">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="book-open" class="w-5 h-5 text-gold-400"></i>
+                </div>
+                <p class="text-sm dark:text-navy-200 text-navy-600 leading-relaxed">Willingness to learn and develop new skills</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 section-dark"></div>
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <p class="text-xs font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">Get In Touch</p>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold dark:text-white text-navy-900">Let's Connect</h2>
+            <p class="dark:text-navy-400 text-navy-500 mt-4 max-w-lg mx-auto">I'm always open to new opportunities and professional connections. Don't hesitate to reach out.</p>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-6 mb-12">
+            <a href="mailto:hend.louqa@email.com" class="reveal glass-card glass rounded-2xl p-6 text-center hover-lift group" style="transition-delay:0.1s">
+                <div class="w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-gold-500/20 transition-colors">
+                    <i data-lucide="mail" class="w-7 h-7 text-gold-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 text-sm mb-1">Email</h3>
+                <p class="text-xs dark:text-navy-400 text-navy-500 break-all">hend.louqa@email.com</p>
+            </a>
+            <a href="https://wa.me/201000000000" target="_blank" class="reveal glass-card glass rounded-2xl p-6 text-center hover-lift group" style="transition-delay:0.2s">
+                <div class="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/20 transition-colors">
+                    <i data-lucide="phone" class="w-7 h-7 text-green-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 text-sm mb-1">WhatsApp</h3>
+                <p class="text-xs dark:text-navy-400 text-navy-500">+20 100 000 0000</p>
+            </a>
+            <a href="#" class="reveal glass-card glass rounded-2xl p-6 text-center hover-lift group" style="transition-delay:0.3s">
+                <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/20 transition-colors">
+                    <i data-lucide="linkedin" class="w-7 h-7 text-blue-400"></i>
+                </div>
+                <h3 class="font-semibold dark:text-white text-navy-900 text-sm mb-1">LinkedIn</h3>
+                <p class="text-xs dark:text-navy-400 text-navy-500">Hend Louqa</p>
+            </a>
+        </div>
+        <div class="reveal-scale">
+            <form id="contact-form" class="glass rounded-3xl p-8 md:p-10">
+                <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium dark:text-navy-300 text-navy-600 mb-2 uppercase tracking-wider">Your Name</label>
+                        <input type="text" placeholder="John Doe" class="w-full bg-navy-500/5 dark:bg-white/5 border border-navy-500/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm dark:text-white text-navy-800 placeholder-navy-400 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/25 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium dark:text-navy-300 text-navy-600 mb-2 uppercase tracking-wider">Your Email</label>
+                        <input type="email" placeholder="john@example.com" class="w-full bg-navy-500/5 dark:bg-white/5 border border-navy-500/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm dark:text-white text-navy-800 placeholder-navy-400 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/25 transition-all">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-medium dark:text-navy-300 text-navy-600 mb-2 uppercase tracking-wider">Subject</label>
+                    <input type="text" placeholder="Job Opportunity" class="w-full bg-navy-500/5 dark:bg-white/5 border border-navy-500/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm dark:text-white text-navy-800 placeholder-navy-400 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/25 transition-all">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-xs font-medium dark:text-navy-300 text-navy-600 mb-2 uppercase tracking-wider">Message</label>
+                    <textarea rows="5" placeholder="Write your message here..." class="w-full bg-navy-500/5 dark:bg-white/5 border border-navy-500/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm dark:text-white text-navy-800 placeholder-navy-400 focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/25 transition-all resize-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 py-3.5 rounded-xl font-semibold text-sm hover:from-gold-400 hover:to-gold-500 transition-all hover:shadow-lg hover:shadow-gold-500/25 flex items-center justify-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="relative py-16 overflow-hidden">
+    <div class="absolute inset-0 bg-navy-950"></div>
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+        <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center text-navy-950 font-serif font-bold text-2xl mb-6">H</div>
+            <h3 class="font-serif text-2xl font-bold dark:text-white text-navy-900 mb-2">Hend Louqa</h3>
+            <p class="dark:text-navy-400 text-navy-500 text-sm mb-6">Accounting Student | Administrative Professional</p>
+            <div class="flex items-center gap-4 mb-8">
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="github" class="w-4 h-4"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                <a href="mailto:hend.louqa@email.com" class="w-10 h-10 rounded-full glass flex items-center justify-center dark:text-navy-300 text-navy-500 hover:text-gold-400 hover:scale-110 transition-all"><i data-lucide="mail" class="w-4 h-4"></i></a>
+            </div>
+            <div class="premium-divider w-full max-w-xs mb-6">
+                <i data-lucide="diamond" class="w-4 h-4 text-gold-500"></i>
+            </div>
+            <p class="text-xs dark:text-navy-500 text-navy-400">&copy; 2025 Hend Louqa. All rights reserved. Crafted with excellence.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" class="fixed bottom-8 right-8 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 text-navy-950 flex items-center justify-center shadow-lg shadow-gold-500/25 hover:scale-110 transition-all">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+</button>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/201000000000" target="_blank" class="whatsapp-btn fixed bottom-8 left-8 z-40 w-14 h-14 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg shadow-green-500/30 hover:scale-110 transition-all">
+    <i data-lucide="message-circle" class="w-6 h-6"></i>
+</a>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-24 right-8 z-50 glass rounded-2xl px-6 py-4 flex items-center gap-3 transform translate-x-[120%] transition-transform duration-500">
+    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div>
+    <p class="text-sm font-medium dark:text-white text-navy-800" id="toast-message">Message sent successfully!</p>
+</div>
+
+<script>
+// Initialize Lucide Icons
+lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+
+// ===== LOADER =====
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+    }, 2000);
+});
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.4 + 0.1;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+    }
+    draw() {
+        const isDark = document.documentElement.classList.contains('dark');
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? `rgba(201,168,76,${this.opacity})` : `rgba(10,31,53,${this.opacity * 0.5})`;
+        ctx.fill();
+    }
+}
+for (let i = 0; i < 60; i++) particles.push(new Particle());
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    // Draw connections
+    const isDark = document.documentElement.classList.contains('dark');
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = isDark ? `rgba(201,168,76,${0.06 * (1 - dist / 120)})` : `rgba(10,31,53,${0.04 * (1 - dist / 120)})`;
+                ctx.stroke();
+            }
+        }
+    }
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ===== SCROLL PROGRESS =====
+window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('scroll-progress').style.width = progress + '%';
+});
+
+// ===== NAVBAR SCROLL EFFECT =====
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        navbar.classList.add('glass');
+        navbar.style.borderBottom = '1px solid rgba(201,168,76,0.1)';
+    } else {
+        navbar.classList.remove('glass');
+        navbar.style.borderBottom = 'none';
+    }
+});
+
+// ===== MOBILE MENU =====
+const mobileMenu = document.getElementById('mobile-menu');
+document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.add('open'));
+document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.remove('open'));
+document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+// ===== THEME TOGGLE =====
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    const html = document.documentElement;
+    if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        document.querySelectorAll('.section-dark').forEach(el => {
+            el.classList.remove('section-dark');
+            el.classList.add('section-light');
+        });
+        document.getElementById('hero').querySelector('.absolute.inset-0').classList.remove('from-navy-950', 'via-navy-900', 'to-navy-950');
+        document.getElementById('hero').querySelector('.absolute.inset-0').classList.add('from-gray-50', 'via-white', 'to-gray-50');
+    } else {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        document.querySelectorAll('.section-light').forEach(el => {
+            el.classList.remove('section-light');
+            el.classList.add('section-dark');
+        });
+        document.getElementById('hero').querySelector('.absolute.inset-0').classList.remove('from-gray-50', 'via-white', 'to-gray-50');
+        document.getElementById('hero').querySelector('.absolute.inset-0').classList.add('from-navy-950', 'via-navy-900', 'to-navy-950');
+    }
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+});
+
+// ===== TYPING EFFECT =====
+const typingTexts = ['Receptionist', 'Sales Representative', 'Social Media Moderator', 'Data Entry Specialist'];
+let textIndex = 0, charIndex = 0, isDeleting = false;
+function typeEffect() {
+    const el = document.getElementById('typing-text');
+    const current = typingTexts[textIndex];
+    if (isDeleting) {
+        el.textContent = current.substring(0, charIndex--);
+        if (charIndex < 0) {
+            isDeleting = false;
+            textIndex = (textIndex + 1) % typingTexts.length;
+            setTimeout(typeEffect, 500);
+            return;
+        }
+        setTimeout(typeEffect, 40);
+    } else {
+        el.textContent = current.substring(0, charIndex++);
+        if (charIndex > current.length) {
+            isDeleting = true;
+            setTimeout(typeEffect, 2000);
+            return;
+        }
+        setTimeout(typeEffect, 80);
+    }
+}
+setTimeout(typeEffect, 2500);
+
+// ===== SCROLL REVEAL =====
+const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+        }
+    });
+}, observerOptions);
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children').forEach(el => {
+    revealObserver.observe(el);
+});
+
+// ===== SKILL BAR ANIMATION =====
+const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.querySelectorAll('.skill-bar-fill').forEach((bar, i) => {
+                setTimeout(() => bar.classList.add('animated'), i * 80);
+            });
+            skillObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.2 });
+skillObserver.observe(document.getElementById('skills-container'));
+
+// ===== COUNTER ANIMATION =====
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.querySelectorAll('.counter-value').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                const start = performance.now();
+                function updateCounter(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    counter.textContent = Math.floor(eased * target) + (target > 3 ? '+' : '');
+                    if (progress < 1) requestAnimationFrame(updateCounter);
+                }
+                requestAnimationFrame(updateCounter);
+            });
+            counterObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+counterObserver.observe(document.getElementById('stats'));
+
+// ===== BACK TO TOP =====
+const backToTop = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+        backToTop.classList.add('visible');
+    } else {
+        backToTop.classList.remove('visible');
+    }
+});
+backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ===== DOWNLOAD CV =====
+function downloadCV() {
+    showToast('CV download started! (Demo)');
+}
+
+// ===== CONTACT FORM =====
+document.getElementById('contact-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('Message sent successfully!');
+    e.target.reset();
+});
+
+// ===== TOAST =====
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-message').textContent = message;
+    toast.style.transform = 'translateX(0)';
+    setTimeout(() => {
+        toast.style.transform = 'translateX(120%)';
+    }, 3000);
+}
+
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offset = 80;
+            const top = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+    });
+});
+</script>
+</body>
+</html>
